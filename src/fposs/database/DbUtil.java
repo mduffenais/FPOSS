@@ -201,7 +201,17 @@ public class DbUtil {
                 conn.close();
             }
         }
-        
+         //These are the methods for adding, deleteing, and updating the entries on the categories screen
+        public static void addCat(String newCat, int orderCat) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+            String sql = "INSERT INTO categories(category_name,displayOrder)" 
+                    +"VALUES('"+newCat+"',"+orderCat+")";
+                //System.out.println(sql);
+                conn.createStatement().executeUpdate(sql);
+            conn.close();
+        }
+        }
+            
         public static void addItem(int barcode, String prodName, double price, 
                 int tax, int dispOrd) throws SQLException{
             try (Connection conn = DbConnect.Connect()) {

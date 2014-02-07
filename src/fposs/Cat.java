@@ -241,15 +241,15 @@ public class Cat extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new Cat().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
-                }
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            try {
+                new Cat().setVisible(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
+        }
+    });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
