@@ -21,7 +21,7 @@ public class DbUtil {
     protected static String userName;
     protected static String password;
    //protected static int categories;
-     
+   
 
     public DbUtil(String user, String Password) throws SQLException {
         DbUtil.userName=user;
@@ -74,6 +74,29 @@ public class DbUtil {
       
     }
     
+      public static String[][] listLoadItems() throws SQLException{
+        ResultSet rsItem;
+        try (Connection conn = DbConnect.Connect()) {
+            String sql = "SELECT * FROM products ORDER BY display_Order";
+            rsItem = conn.createStatement().executeQuery(sql);
+            rsItem.last();
+            String itemsLoad[][] = new String[rsItem.getRow()][6];
+            rsItem.beforeFirst();
+         while(rsItem.next()){
+         itemsLoad[rsItem.getRow()-1][0] = rsItem.getString("barcode");
+         itemsLoad[rsItem.getRow()-1][1] = rsItem.getString("product_Name");
+         itemsLoad[rsItem.getRow()-1][2] = rsItem.getString("categoryid");
+         itemsLoad[rsItem.getRow()-1][3] = rsItem.getString("price");
+         itemsLoad[rsItem.getRow()-1][4] = rsItem.getString("taxable");
+         itemsLoad[rsItem.getRow()-1][5] = rsItem.getString("display_Order");
+         }
+           return itemsLoad;
+        }
+  
+  
+    }
+            
+    
         public static boolean logIn() throws SQLException {
         boolean loggedIn = false;
             try{
@@ -97,5 +120,44 @@ public class DbUtil {
            return loggedIn;
 
         }
-    
+        //These are the methods for adding, deleteing, and updating the entries on the categories screen
+        public static void addCat(String newCat, int orderCat) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+            String sql = "INSERT INTO categories(category_name,displayOrder)" 
+                    +"VALUES('"+newCat+"',"+orderCat+")";
+                //System.out.println(sql);
+                conn.createStatement().executeUpdate(sql);
+            conn.close();
+        }
+    }
+        public static void delCat (String dispDesc) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+                String sql = "DELETE FROM categories WHERE category_name='"+dispDesc+"'";
+                //System.out.println(sql);
+                conn.createStatement().executeUpdate(sql);
+                conn.close();
+            }
+        }
+        
+        public static void editCat(String dispDesc, String newCat, int catOrd) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+                String sql = "UPDATE categories"
+                        +" SET category_name='"+newCat+"', displayOrder="+catOrd+
+                        " WHERE category_name='"+dispDesc+"'";
+                conn.createStatement().executeUpdate(sql);
+                conn.close();
+            }
+        }
+        
+        public static void addItem(int barcode, String prodName, double price, 
+                int tax, int dispOrd) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+                String sql = "INSERT INTO products(barcode,product_Name," +
+                        "price,taxable,display_Order)"+
+                        "VALUES("+barcode+",'"+prodName+"',"+price+","+tax+","+dispOrd+")";
+                conn.createStatement().executeQuery(sql);
+                conn.close();
+            }
+        }
 }
+

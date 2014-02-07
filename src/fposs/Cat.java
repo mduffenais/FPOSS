@@ -6,17 +6,26 @@
 
 package fposs;
 
+import fposs.database.DbUtil;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JList;
+
 /**
  *
  * @author hirev
  */
 public class Cat extends javax.swing.JFrame {
+    
+    
 
     /**
      * Creates new form Cat
      */
-    public Cat() {
+    public Cat() throws SQLException {
         initComponents();
+        loadList();
     }
 
     /**
@@ -29,10 +38,10 @@ public class Cat extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -46,23 +55,33 @@ public class Cat extends javax.swing.JFrame {
 
         jLabel1.setText("Categories");
 
-        jButton1.setText("Edit");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                editButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Add");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                addButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Delete");
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Save");
+        saveButton.setText("Save");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Category Name");
 
@@ -110,13 +129,13 @@ public class Cat extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1)
+                        .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)
+                        .addComponent(deleteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)))
+                        .addComponent(saveButton)))
                 .addContainerGap(117, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -130,10 +149,10 @@ public class Cat extends javax.swing.JFrame {
                         .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2)
-                            .addComponent(jButton3)
-                            .addComponent(jButton4)))
+                            .addComponent(editButton)
+                            .addComponent(addButton)
+                            .addComponent(deleteButton)
+                            .addComponent(saveButton)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -152,14 +171,48 @@ public class Cat extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        try {
+            DbUtil.addCat(jTextField1.getText(), Integer.parseInt(jTextField2.getText()));
+            jTextField1.setText("");
+            jTextField2.setText("");
+            list1.removeAll();
+            loadList();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        String test = list1.getSelectedItem();
+        String descChange = jTextField1.getText();
+        int ordChange = Integer.parseInt(jTextField2.getText());
+        try {
+            DbUtil.editCat(test, descChange, ordChange);
+            list1.removeAll();
+            loadList();
+        } catch (SQLException ex) {
+            Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
 
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        String test = list1.getSelectedItem();
+        try {
+            DbUtil.delCat(test);
+            list1.removeAll();
+            loadList();
+        } catch (SQLException ex) {
+            Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //System.out.println(test);
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_saveButtonActionPerformed
+    
     /**
      * @param args the command line arguments
      */
@@ -190,18 +243,21 @@ public class Cat extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Cat().setVisible(true);
+                try {
+                    new Cat().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
+    private javax.swing.JButton deleteButton;
+    private javax.swing.JButton editButton;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -209,6 +265,18 @@ public class Cat extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private java.awt.List list1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
-
+    private String loadCat[][];
+    
+    private void loadList() throws SQLException
+    {
+        int strLng = DbUtil.loadCategories().length;
+        loadCat = DbUtil.loadCategories();  
+        System.out.println(loadCat[0][0].toString());
+        for (int i=0;i<strLng;i++)
+        {
+            list1.add(String.valueOf(loadCat[i][1]));
+        }
+    }
 }
