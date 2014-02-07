@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,21 +31,58 @@ import javax.swing.JPanel;
  * @author hirev
  */
 public class Sales extends javax.swing.JFrame {
+    private String bsNumber;
+    private String cName;
+    private String cAddress;
+    private String cPhone;
+    private Double taxRate;
     private JLayeredPane layeredPane;
+    private Double subTotal = 0.00;
+    private Double taxSubtotal = 0.00;
+    private Double taxTotalCalculated=0.00;
+    private Double amountDueCalculated=0.00;
+    private Double amountPaidEntry=0.00;
+    private Double discountEntry=0.00;
    String itemsArray[]=new String[6];
+   private static String userName;
+   private static int level;
+   DecimalFormat decim = new DecimalFormat("#.00");
   private ArrayList<String[]> action = new ArrayList<String[]>();
     /**
      * Creates new form Sales
      * @throws java.sql.SQLException
      */
    
-    public Sales() throws SQLException {
-        
+    public Sales(String[] loggedin) throws SQLException {
+        //this.userName = userName;
+        //this.level = level;
+        this.level=Integer.parseInt(loggedin[2]);
+        this.userName = loggedin[1];
         initComponents();
         onCreate();
+        companySetup();
     }
+    
+public void companySetup() throws SQLException{
+String[] setup =new String[5];
+setup = DbUtil.loadCompanySetup();
+bsNumber= setup[0];
+cName = setup[1];
+cAddress = setup[2];
+cPhone = setup[3];
+taxRate = Double.parseDouble(setup[4]);
+
+}    
+    
 public void onCreate() throws SQLException{
     //DbUtil categories = new DbUtil();
+    System.out.println(level);
+    if(level!=1){jPanel1.setEnabled(false);
+            jButton2.setEnabled(false);
+            jButton3.setEnabled(false);
+            jButton4.setEnabled(false);
+            jButton6.setEnabled(false);}
+  
   double catNumeber = DbUtil.loadCategories().length;
   int rows = (int) Math.ceil(catNumeber/5);
  jPanel2.setLayout(new GridLayout(rows, 5, 4, 4));
@@ -106,15 +144,23 @@ public void loadItems(String category) throws SQLException{
                 btn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae2) {
            list1.add(String.valueOf(itemsArray[1]));  
+          subTotal += Double.parseDouble(itemsArray[3]);
+          // Double subTotal = Double.parseDouble(subTotals.getText()) + Double.parseDouble(itemsArray[3]);
+          // Double taxField = Double.parseDouble(taxTemp.getText());
+     //      Double taxCalcTotal;
            
-           Double subTotal = Double.parseDouble(jTextField1.getText()) + Double.parseDouble(itemsArray[3]);
-           Double taxCalcTotal;
-           // set parse int for is taxable
-           // run DB query to get tax rate and make global using on create function 
-           
-          
-        //   if(itemsArray[)
-           jTextField1.setText(subTotal.toString());
+          if(itemsArray[4].equals("1")){
+        taxSubtotal+= Double.parseDouble(itemsArray[3]);
+      
+        // taxField+= Double.parseDouble(itemsArray[3]);
+        //  taxTemp.setText(decim.format(taxField).toString());
+          }
+            taxTotalCalculated =taxSubtotal*(taxRate/100);
+        amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
+        amountDue.setText(decim.format(amountDueCalculated).toString());
+           subTotals.setText(decim.format(subTotal).toString());
+           taxTotal.setText(decim.format(taxSubtotal*taxRate/100).toString());
+           total.setText(decim.format(subTotal+taxTotalCalculated).toString());
            action.add(itemsArray);
            jPanel2.setVisible(true);
            jPanel3.setVisible(false);
@@ -153,12 +199,6 @@ public void loadItems(String category) throws SQLException{
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 100), new java.awt.Dimension(0, 100), new java.awt.Dimension(32767, 100));
         jPanel1 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -169,6 +209,15 @@ public void loadItems(String category) throws SQLException{
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         list1 = new java.awt.List();
+        subTotals = new javax.swing.JFormattedTextField();
+        taxTotal = new javax.swing.JFormattedTextField();
+        total = new javax.swing.JFormattedTextField();
+        amountPaid = new javax.swing.JFormattedTextField();
+        discount = new javax.swing.JFormattedTextField();
+        amountDue = new javax.swing.JFormattedTextField();
+        buttonApplyDiscount = new javax.swing.JButton();
+        buttonAmountPaid = new javax.swing.JButton();
+        buttoonNewOrder = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -198,27 +247,21 @@ public void loadItems(String category) throws SQLException{
 
         jLabel6.setText("Amount Due");
 
-        jTextField1.setText("0.00");
-        jTextField1.setEnabled(false);
-
-        jTextField2.setText("jTextField1");
-        jTextField2.setEnabled(false);
-
-        jTextField3.setText("jTextField1");
-        jTextField3.setEnabled(false);
-
-        jTextField4.setText("jTextField1");
-        jTextField4.setEnabled(false);
-
-        jTextField5.setText("jTextField5");
-
-        jTextField6.setText("jTextField5");
-
         jLabel7.setText("Admin controls");
 
         jButton2.setText("User Control");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Categories");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Items");
 
@@ -269,7 +312,7 @@ public void loadItems(String category) throws SQLException{
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 412, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,12 +323,63 @@ public void loadItems(String category) throws SQLException{
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
+
+        subTotals.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        subTotals.setText("0.00");
+        subTotals.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+
+        taxTotal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        taxTotal.setText("0.00");
+        taxTotal.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+
+        total.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        total.setText("0.00");
+        total.setFocusCycleRoot(true);
+        total.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+
+        amountPaid.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        amountPaid.setText("0.00");
+        amountPaid.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+
+        discount.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        discount.setText("0.00");
+        discount.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+
+        amountDue.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        amountDue.setText("0.00");
+        amountDue.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+        amountDue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                amountDueActionPerformed(evt);
+            }
+        });
+
+        buttonApplyDiscount.setText("Apply Discount");
+        buttonApplyDiscount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonApplyDiscountActionPerformed(evt);
+            }
+        });
+
+        buttonAmountPaid.setText("Amount PAid");
+        buttonAmountPaid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAmountPaidActionPerformed(evt);
+            }
+        });
+
+        buttoonNewOrder.setText("New Order");
+        buttoonNewOrder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttoonNewOrderActionPerformed(evt);
+            }
+        });
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -319,59 +413,66 @@ public void loadItems(String category) throws SQLException{
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(33, 33, 33)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel4)
                                     .addComponent(jLabel3)
+                                    .addComponent(jLabel1)
                                     .addComponent(jLabel2)
-                                    .addComponent(jLabel1))
-                                .addGap(7, 7, 7))
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5))
+                                .addGap(1, 1, 1))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                .addComponent(jLabel4)))
+                        .addGap(8, 8, 8)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(94, 94, 94))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(taxTotal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(total, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(amountDue)
+                            .addComponent(subTotals)
+                            .addComponent(discount, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(amountPaid))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(21, 21, 21)))
-                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(buttonAmountPaid)
+                            .addComponent(buttoonNewOrder)
+                            .addComponent(buttonApplyDiscount))
+                        .addGap(38, 38, 38)
+                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(subTotals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(taxTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(discount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonApplyDiscount))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(amountPaid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(buttonAmountPaid))
+                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(amountDue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttoonNewOrder))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -394,6 +495,60 @@ public void loadItems(String category) throws SQLException{
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void amountDueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_amountDueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_amountDueActionPerformed
+
+    private void buttonApplyDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonApplyDiscountActionPerformed
+ discountEntry = Double.parseDouble(discount.getText());
+     amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
+     amountDue.setText(decim.format(amountDueCalculated).toString());// TODO add your handling code here:
+    }//GEN-LAST:event_buttonApplyDiscountActionPerformed
+
+    private void buttonAmountPaidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAmountPaidActionPerformed
+   amountPaidEntry = Double.parseDouble(amountPaid.getText());
+     amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
+     amountDue.setText(decim.format(amountDueCalculated).toString());    }//GEN-LAST:event_buttonAmountPaidActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+                Cat cat = new Cat();
+               cat.pack();
+               cat.setVisible(true);
+         //      this.setVisible(false);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            UserControl  control = new UserControl();
+            control.pack();
+            control.setVisible(true);
+            // this.setVisible(false);  
+        } catch (SQLException ex) {
+            Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void buttoonNewOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttoonNewOrderActionPerformed
+        try {
+            DbUtil.salesUpdate(userName,subTotal,taxTotalCalculated,discountEntry,amountPaidEntry);
+        } catch (SQLException ex) {
+            Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        subTotal = 0.00;
+      taxSubtotal = 0.00;
+      taxTotalCalculated=0.00;
+      amountDueCalculated=0.00;
+      amountPaidEntry=0.00;
+      discountEntry=0.00;
+     list1.removeAll();
+     subTotals.setText("0.00");
+     total.setText("0.00");
+     discount.setText("0.00");
+     amountPaid.setText("0.00");
+     amountDue.setText("0.00");
+     
+      }//GEN-LAST:event_buttoonNewOrderActionPerformed
 
     
     /**
@@ -424,18 +579,24 @@ public void loadItems(String category) throws SQLException{
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new Sales().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                try {
+//                    new Sales().setVisible(true);
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JFormattedTextField amountDue;
+    private javax.swing.JFormattedTextField amountPaid;
+    private javax.swing.JButton buttonAmountPaid;
+    private javax.swing.JButton buttonApplyDiscount;
+    private javax.swing.JButton buttoonNewOrder;
+    private javax.swing.JFormattedTextField discount;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.Box.Filler filler1;
@@ -454,14 +615,11 @@ public void loadItems(String category) throws SQLException{
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     private java.awt.List list1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JFormattedTextField subTotals;
+    private javax.swing.JFormattedTextField taxTotal;
+    private javax.swing.JFormattedTextField total;
     // End of variables declaration//GEN-END:variables
 
 }

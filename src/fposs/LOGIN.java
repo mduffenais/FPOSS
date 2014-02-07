@@ -6,6 +6,7 @@
 
 package fposs;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.String;
 import fposs.database.DbUtil;
 import java.awt.Color;
 import java.sql.SQLException;
@@ -158,12 +159,14 @@ public class LOGIN extends javax.swing.JFrame {
         if(!textUser.getText().isEmpty() && !textPassword.getText().isEmpty()){
            try {
                DbUtil login = new DbUtil(textUser.getText(),textPassword.getText());
+               String[] loggedin = login.logIn();
                System.out.println(login.logIn());
-               if(login.logIn() == true){
-               Sales sales = new Sales();
+               if(loggedin[0].equals("true")){
+               Sales sales = new Sales(loggedin);
                sales.pack();
                sales.setVisible(true);
                this.setVisible(false);
+               
                }
            } catch (SQLException ex) {
                Logger.getLogger(LOGIN.class.getName()).log(Level.SEVERE, null, ex);

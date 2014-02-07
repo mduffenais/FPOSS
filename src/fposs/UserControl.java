@@ -6,6 +6,11 @@
 
 package fposs;
 
+import fposs.database.DbUtil;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author hirev
@@ -15,10 +20,28 @@ public class UserControl extends javax.swing.JFrame {
     /**
      * Creates new form UserControl
      */
-    public UserControl() {
+    String[][] users;
+    int selected;
+    public UserControl() throws SQLException {
         initComponents();
+        onCreate();
+        
     }
 
+    public void onCreate() throws SQLException {
+    setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+    users = DbUtil.getUsers();
+    for(int i =0;i<users.length;i++){
+        if(users[i][1].equals("1")){
+    list1.add(users[i][0]);}
+        else{
+         list1.add(users[i][0]);}
+    
+    }
+    ButtonSaveEdit.setVisible(false);
+    ButtonSaveNew.setVisible(false);
+    ButtonSaveDelete.setVisible(false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,18 +52,19 @@ public class UserControl extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jComboBox1 = new javax.swing.JComboBox();
+        list1 = new java.awt.List();
+        ButtonSaveEdit = new javax.swing.JButton();
+        ButtonSaveNew = new javax.swing.JButton();
+        ButtonSaveDelete = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -49,20 +73,26 @@ public class UserControl extends javax.swing.JFrame {
 
         jLabel1.setText("User List");
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
-
         jButton1.setText("Edit User");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Delete User");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("New User");
-
-        jButton4.setText("Save");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("User Name");
 
@@ -70,14 +100,42 @@ public class UserControl extends javax.swing.JFrame {
 
         jLabel4.setText("Security Level");
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setEditable(false);
 
-        jTextField2.setText("jTextField2");
+        jTextField2.setEditable(false);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "User", "Admin"}));
+        jComboBox1.setEnabled(false);
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        list1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                list1MouseClicked(evt);
+            }
+        });
+
+        ButtonSaveEdit.setText("Save");
+        ButtonSaveEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonSaveEditActionPerformed(evt);
+            }
+        });
+
+        ButtonSaveNew.setText("Save");
+        ButtonSaveNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonSaveNewActionPerformed(evt);
+            }
+        });
+
+        ButtonSaveDelete.setText("save");
+        ButtonSaveDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonSaveDeleteActionPerformed(evt);
             }
         });
 
@@ -102,37 +160,42 @@ public class UserControl extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton3)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(130, 130, 130)
-                        .addComponent(jButton4)))
-                .addContainerGap(135, Short.MAX_VALUE))
+                        .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addGap(25, 25, 25)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField2)
+                                    .addComponent(jTextField1)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(ButtonSaveEdit)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ButtonSaveDelete)
+                                    .addComponent(jButton2))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ButtonSaveNew)
+                            .addComponent(jButton3))))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,8 +205,8 @@ public class UserControl extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
                             .addComponent(jButton2)
@@ -160,21 +223,147 @@ public class UserControl extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
                             .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ButtonSaveEdit)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(ButtonSaveNew)
+                        .addComponent(ButtonSaveDelete)))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
+
+        ButtonSaveEdit.getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        System.exit(0);
+        //System.exit(0);
+        
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        list1.setEnabled(false);
+        jTextField1.setEnabled(true);
+        jTextField2.setEnabled(true);
+        jTextField2.setEditable(true);
+        jComboBox1.setEnabled(true);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        ButtonSaveEdit.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void ButtonSaveEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveEditActionPerformed
+         list1.setEnabled(true);
+        jTextField1.setEnabled(false);
+        jTextField2.setEnabled(false);
+        jTextField2.setEditable(false);
+        jComboBox1.setEnabled(false);
+        jButton1.setVisible(true);
+        jButton2.setVisible(true);
+        jButton3.setVisible(true);
+        ButtonSaveEdit.setVisible(false);
+        try {
+            DbUtil.userUpdate(jTextField1.getText(), jTextField2.getText(),jComboBox1.getSelectedIndex());
+        } catch (SQLException ex) {
+            Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        list1.removeAll();
+        try {
+            onCreate();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ButtonSaveEditActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        list1.setEnabled(false);
+        jTextField1.setEnabled(true);
+        jTextField2.setEnabled(true);
+        jTextField2.setEditable(true);
+        jComboBox1.setEnabled(true);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        ButtonSaveDelete.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void ButtonSaveDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveDeleteActionPerformed
+        try {
+            try {
+                list1.setEnabled(true);
+                jTextField1.setEnabled(false);
+                jTextField2.setEnabled(false);
+                jTextField2.setEditable(false);
+                jComboBox1.setEnabled(false);
+                jButton1.setVisible(true);
+                jButton2.setVisible(true);
+                jButton3.setVisible(true);
+                ButtonSaveDelete.setVisible(false);
+                DbUtil.deleteUser(list1.getSelectedItem().toString());
+            } catch (SQLException ex) {
+                Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            list1.removeAll();
+            onCreate();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_ButtonSaveDeleteActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        list1.setEnabled(false);
+        jTextField1.setEnabled(true);
+        jTextField1.setText(null);
+        jTextField1.setEditable(true);
+        jTextField2.setText(null);
+        jTextField2.setEnabled(true);
+        jTextField2.setEditable(true);
+        jComboBox1.setEnabled(true);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        ButtonSaveNew.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void ButtonSaveNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveNewActionPerformed
+        try {
+            list1.setEnabled(true);
+            jTextField1.setEnabled(false);
+            jTextField1.setEditable(false);
+            jTextField2.setEnabled(false);
+            jTextField2.setEditable(false);
+            jComboBox1.setEnabled(false);
+            jButton1.setVisible(true);
+            jButton2.setVisible(true);
+            jButton3.setVisible(true);
+            ButtonSaveNew.setVisible(false);
+            DbUtil.addUser(jTextField1.getText(), jTextField2.getText(), jComboBox1.getSelectedIndex());
+        } catch (SQLException ex) {
+            Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        list1.removeAll();
+        try {
+            onCreate();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_ButtonSaveNewActionPerformed
+
+    private void list1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list1MouseClicked
+        selected = list1.getSelectedIndex();
+        jTextField1.setText(users[selected][0]);
+        jTextField2.setText("*********");
+        jComboBox1.setSelectedIndex(Integer.parseInt(users[selected][1]));
+
+    }//GEN-LAST:event_list1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -206,27 +395,32 @@ public class UserControl extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UserControl().setVisible(true);
+                try {
+                    new UserControl().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ButtonSaveDelete;
+    private javax.swing.JButton ButtonSaveEdit;
+    private javax.swing.JButton ButtonSaveNew;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JList jList1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private java.awt.List list1;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
 
