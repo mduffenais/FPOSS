@@ -1,55 +1,63 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+ Developers : Mike Duffenais and Chad Paquet
+ Since: Feb 10 2014
 
+
+ *items.Java
+ */
 package fposs;
 
-import fposs.database.DbConnect;
 import fposs.database.DbUtil;
-import static fposs.database.DbUtil.loadCategories;
-import java.awt.List;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.security.util.BigInt;
 
 /**
  *
- * @author hirev
+ * @author Mike Duffenais and Chad Paquet
  */
 public class Items extends javax.swing.JFrame {
 
     /**
      * Creates new form Items
      */
+// Declare Vars 
     String categories[][];
     int selected;
     String[][] itemsLoad;
+
+    // constructor 
     public Items() throws SQLException {
         initComponents();
         onCreate();
     }
+// onCreate function 
 
-    public  void onCreate() throws SQLException{
-    setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-    itemsLoad= DbUtil.loadItems();
-    categories = DbUtil.loadCategories();
-    ArrayList catList = new ArrayList(); 
+    public void onCreate() throws SQLException {
+        // set default close operation 
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        // get array of items to load 
+        itemsLoad = DbUtil.loadItems();
+// get array of categories 
+        categories = DbUtil.loadCategories();
+        ArrayList catList = new ArrayList();
+        // populate combo box 
         for (String[] categorie : categories) {
             jComboBox1.addItem(categorie[1]);
         }
-    for(int i = 0;i < itemsLoad.length;i++){
-        list1.add(itemsLoad[i][1]);
+        // add items to list1
+        for (int i = 0; i < itemsLoad.length; i++) {
+            list1.add(itemsLoad[i][1]);
+        }
+        // set button visibility 
+        buttonSaveAdd.setVisible(false);
+        buttonSaveEdit.setVisible(false);
+        buttonSaveDelete.setVisible(false);
+        Cancel.setVisible(false);
     }
-    buttonSaveAdd.setVisible(false);
-    buttonSaveEdit.setVisible(false);
-    buttonSaveDelete.setVisible(false);
-    Cancel.setVisible(false);
-    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -289,11 +297,12 @@ public class Items extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void list1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list1MouseClicked
-        selected=list1.getSelectedIndex();
+        // get selected items and populate text fields 
+        selected = list1.getSelectedIndex();
         textField1.setText(itemsLoad[selected][0]);
         textField2.setText(itemsLoad[selected][1]);
-        jComboBox1.setSelectedIndex(Integer.parseInt(categories[Integer.parseInt(itemsLoad[selected][2])-1][0])-1);
-       System.out.println(categories[Integer.parseInt(itemsLoad[selected][2])-1][0]);
+        jComboBox1.setSelectedIndex(Integer.parseInt(categories[Integer.parseInt(itemsLoad[selected][2]) - 1][0]) - 1);
+        System.out.println(categories[Integer.parseInt(itemsLoad[selected][2]) - 1][0]);
         textField3.setText(itemsLoad[selected][3]);
         jComboBox2.setSelectedIndex(Integer.parseInt(itemsLoad[selected][4]));
         textField4.setText(itemsLoad[selected][5]);
@@ -301,84 +310,90 @@ public class Items extends javax.swing.JFrame {
     }//GEN-LAST:event_list1MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-textField2.setEditable(true);
-textField2.setEnabled(true);
-textField3.setEditable(true);
-textField3.setEnabled(true);
-textField4.setEditable(true);
-textField4.setEnabled(true);
-jComboBox1.setEnabled(true);
-jComboBox2.setEnabled(true);
-list1.setEnabled(false);
-jButton1.setVisible(false);
-jButton2.setVisible(false);
-jButton3.setVisible(false);
-buttonSaveEdit.setVisible(true);
-Cancel.setVisible(true);
+//EDIT button action to hide and set visibility of fields and buttons 
+        textField2.setEditable(true);
+        textField2.setEnabled(true);
+        textField3.setEditable(true);
+        textField3.setEnabled(true);
+        textField4.setEditable(true);
+        textField4.setEnabled(true);
+        jComboBox1.setEnabled(true);
+        jComboBox2.setEnabled(true);
+        list1.setEnabled(false);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        buttonSaveEdit.setVisible(true);
+        Cancel.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void buttonSaveEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveEditActionPerformed
-textField2.setEditable(false);
-textField2.setEnabled(false);
-textField3.setEditable(false);
-textField3.setEnabled(false);
-textField4.setEditable(false);
-textField4.setEnabled(false);
-jComboBox1.setEnabled(false);
-jComboBox2.setEnabled(false);
-list1.setEnabled(true);
-jButton1.setVisible(true);
-jButton2.setVisible(true);
-jButton3.setVisible(true);
+// Edit save button sets fields visibility and saves updated info to database 
+        textField2.setEditable(false);
+        textField2.setEnabled(false);
+        textField3.setEditable(false);
+        textField3.setEnabled(false);
+        textField4.setEditable(false);
+        textField4.setEnabled(false);
+        jComboBox1.setEnabled(false);
+        jComboBox2.setEnabled(false);
+        list1.setEnabled(true);
+        jButton1.setVisible(true);
+        jButton2.setVisible(true);
+        jButton3.setVisible(true);
         try {
-            DbUtil.editItems(textField1.getText(),textField2.getText(), 
+            // run function to save to DB 
+            DbUtil.editItems(textField1.getText(), textField2.getText(),
                     Integer.parseInt(categories[jComboBox1.getSelectedIndex()][0]),
-                     Double.parseDouble(textField3.getText()),
+                    Double.parseDouble(textField3.getText()),
                     jComboBox2.getSelectedIndex(), Integer.parseInt(textField4.getText()));
         } catch (SQLException ex) {
             Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
         }
-list1.removeAll();
-jComboBox1.removeAllItems();
+        // remove all items from list and combo box 
+        list1.removeAll();
+        jComboBox1.removeAllItems();
         try {
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_buttonSaveEditActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-textField2.setEditable(true);
-textField2.setEnabled(true);
-textField3.setEditable(true);
-textField3.setEnabled(true);
-textField4.setEditable(true);
-textField4.setEnabled(true);
-jComboBox1.setEnabled(true);
-jComboBox2.setEnabled(true);
-list1.setEnabled(false);
-jButton1.setVisible(false);
-jButton2.setVisible(false);
-jButton3.setVisible(false);
-Cancel.setVisible(true);
+//Delete  - set field visibility and button visibility 
+        textField2.setEditable(true);
+        textField2.setEnabled(true);
+        textField3.setEditable(true);
+        textField3.setEnabled(true);
+        textField4.setEditable(true);
+        textField4.setEnabled(true);
+        jComboBox1.setEnabled(true);
+        jComboBox2.setEnabled(true);
+        list1.setEnabled(false);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        Cancel.setVisible(true);
 buttonSaveDelete.setVisible(true);    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void buttonSaveDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveDeleteActionPerformed
-textField2.setEditable(false);
-textField2.setEnabled(false);
-textField3.setEditable(false);
-textField3.setEnabled(false);
-textField4.setEditable(false);
-textField4.setEnabled(false);
-jComboBox1.setEnabled(false);
-jComboBox2.setEnabled(false);
-list1.setEnabled(true);
-jButton1.setVisible(true);
-jButton2.setVisible(true);
-jButton3.setVisible(true);
-list1.removeAll();
-jComboBox1.removeAllItems();
+// Button Save function Sets visibility and runs function to delete items 
+        textField2.setEditable(false);
+        textField2.setEnabled(false);
+        textField3.setEditable(false);
+        textField3.setEnabled(false);
+        textField4.setEditable(false);
+        textField4.setEnabled(false);
+        jComboBox1.setEnabled(false);
+        jComboBox2.setEnabled(false);
+        list1.setEnabled(true);
+        jButton1.setVisible(true);
+        jButton2.setVisible(true);
+        jButton3.setVisible(true);
+        list1.removeAll();
+        jComboBox1.removeAllItems();
         try {
             DbUtil.deleteItem(textField1.getText());
         } catch (SQLException ex) {
@@ -393,90 +408,91 @@ jComboBox1.removeAllItems();
     }//GEN-LAST:event_buttonSaveDeleteActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-textField1.setEditable(true);
-textField1.setEnabled(true);
-textField2.setEditable(true);
-textField2.setEnabled(true);
-textField3.setEditable(true);
-textField3.setEnabled(true);
-textField4.setEditable(true);
-textField4.setEnabled(true);
-jComboBox1.setEnabled(true);
-jComboBox2.setEnabled(true);
-textField1.setText("");
-textField2.setText("");
-textField3.setText("");
-textField4.setText("");
-jComboBox1.setSelectedIndex(-1);
-jComboBox2.setSelectedIndex(-1);
-list1.setEnabled(false);
-jButton1.setVisible(false);
-jButton2.setVisible(false);
-jButton3.setVisible(false);
-Cancel.setVisible(true);
-buttonSaveAdd.setVisible(true);
+//SAVE  sets fields visibility and button visibility 
+        textField1.setEditable(true);
+        textField1.setEnabled(true);
+        textField2.setEditable(true);
+        textField2.setEnabled(true);
+        textField3.setEditable(true);
+        textField3.setEnabled(true);
+        textField4.setEditable(true);
+        textField4.setEnabled(true);
+        jComboBox1.setEnabled(true);
+        jComboBox2.setEnabled(true);
+        textField1.setText("");
+        textField2.setText("");
+        textField3.setText("");
+        textField4.setText("");
+        jComboBox1.setSelectedIndex(-1);
+        jComboBox2.setSelectedIndex(-1);
+        list1.setEnabled(false);
+        jButton1.setVisible(false);
+        jButton2.setVisible(false);
+        jButton3.setVisible(false);
+        Cancel.setVisible(true);
+        buttonSaveAdd.setVisible(true);
 
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void buttonSaveAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveAddActionPerformed
-textField1.setEditable(false);
-textField1.setEnabled(false);
-textField2.setEditable(false);
-textField2.setEnabled(false);
-textField3.setEditable(false);
-textField3.setEnabled(false);
-textField4.setEditable(false);
-textField4.setEnabled(false);
-jComboBox1.setEnabled(false);
-jComboBox2.setEnabled(false);
-list1.setEnabled(true);
-jButton1.setVisible(true);
-jButton2.setVisible(true);
-jButton3.setVisible(true);
-buttonSaveAdd.setVisible(false);
+//ADD set vidibility  - and run function to add items to database
+        textField1.setEditable(false);
+        textField1.setEnabled(false);
+        textField2.setEditable(false);
+        textField2.setEnabled(false);
+        textField3.setEditable(false);
+        textField3.setEnabled(false);
+        textField4.setEditable(false);
+        textField4.setEnabled(false);
+        jComboBox1.setEnabled(false);
+        jComboBox2.setEnabled(false);
+        list1.setEnabled(true);
+        jButton1.setVisible(true);
+        jButton2.setVisible(true);
+        jButton3.setVisible(true);
+        buttonSaveAdd.setVisible(false);
         try {
-            DbUtil.addItem(textField1.getText(),textField2.getText(),Integer.parseInt(categories[jComboBox1.getSelectedIndex()][0]),
-                    Double.parseDouble(textField3.getText()), jComboBox2.getSelectedIndex(),Integer.parseInt(textField4.getText()));
+            // run function to add to DB 
+            DbUtil.addItem(textField1.getText(), textField2.getText(), Integer.parseInt(categories[jComboBox1.getSelectedIndex()][0]),
+                    Double.parseDouble(textField3.getText()), jComboBox2.getSelectedIndex(), Integer.parseInt(textField4.getText()));
         } catch (SQLException ex) {
             Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
         }
-jComboBox1.removeAllItems();
-list1.removeAll();
+        jComboBox1.removeAllItems();
+        list1.removeAll();
 
         try {
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
-        
+
+
     }//GEN-LAST:event_buttonSaveAddActionPerformed
 
     private void CancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelActionPerformed
-textField1.setEditable(false);
-textField1.setEnabled(false);
-textField1.setText("");
-textField2.setEditable(false);
-textField2.setEnabled(false);
-textField2.setText("");
-textField3.setEditable(false);
-textField3.setEnabled(false);
-textField3.setText("");
-textField4.setEditable(false);
-textField4.setEnabled(false);
-textField4.setText("");
-jComboBox1.setEnabled(false);
-jComboBox1.setSelectedIndex(-1);
-jComboBox2.setEnabled(false);
-jComboBox2.setSelectedIndex(-1);
-list1.setEnabled(true);
-jButton1.setVisible(true);
-jButton2.setVisible(true);
-jButton3.setVisible(true);
-
+//Cancel button - Resets window 
+        textField1.setEditable(false);
+        textField1.setEnabled(false);
+        textField1.setText("");
+        textField2.setEditable(false);
+        textField2.setEnabled(false);
+        textField2.setText("");
+        textField3.setEditable(false);
+        textField3.setEnabled(false);
+        textField3.setText("");
+        textField4.setEditable(false);
+        textField4.setEnabled(false);
+        textField4.setText("");
+        jComboBox1.setEnabled(false);
+        jComboBox1.setSelectedIndex(-1);
+        jComboBox2.setEnabled(false);
+        jComboBox2.setSelectedIndex(-1);
+        list1.setEnabled(true);
+        jButton1.setVisible(true);
+        jButton2.setVisible(true);
+        jButton3.setVisible(true);
 
 
     }//GEN-LAST:event_CancelActionPerformed

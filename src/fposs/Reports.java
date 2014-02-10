@@ -1,9 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ Developers : Mike Duffenais and Chad Paquet 
+ Since : Feb 10 2014 
+ Reports screen run reports on button click 
  */
-
 package fposs;
 
 import fposs.database.DbConnect;
@@ -28,11 +27,13 @@ public class Reports extends javax.swing.JFrame {
      */
     public Reports() {
         initComponents();
-     onCreate();
+        onCreate();
     }
-public void onCreate(){
- setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-}
+
+    public void onCreate() {
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -80,8 +81,18 @@ public void onCreate(){
         jTextField3.setEnabled(false);
 
         jButton2.setText("Products");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Company SetUp");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Tax Log");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -176,81 +187,89 @@ public void onCreate(){
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    try{                                         
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("startTime",jTextField1.getText().toString());
-        map.put("endTime",jTextField2.getText().toString());
-   String fileName = "test1.jrxml";  
-        String outFileName = "test.pdf"; 
-        Connection conn = DbConnect.Connect();
-        try{
-            System.out.println("in try");
-            String path="src\\fposs\\reports\\SalesLog.jrxml";
-            System.out.println("after path");
-          //  JasperReport JSPR_REF  = JasperCompileManager.compileReport(path);
-           // System.out.println("after ref");
-           // JasperPrint JSPR_PRINT =JasperFillManager.fillReport(JSPR_REF,map,conn);
-            //System.out.println("after print ");
-            //JasperViewer.viewReport(JSPR_PRINT,false);
-JasperPrint print;  
-            JasperReport jasperreport;  
-            jasperreport = JasperCompileManager.compileReport(fileName);  
-            print = JasperFillManager.fillReport(jasperreport, map, new JREmptyDataSource());  
-  
-            // Create a PDF exporter  
-            JRExporter exporter = new JRPdfExporter();  
-              
-            // Configure the exporter (set output file name and print object)  
-            exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outFileName);  
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);  
-  
-            // Export the PDF file  
-            exporter.exportReport();  
-            } catch (JRException ex) {  
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);  
+        try {
+            // create hash map and get fields to hash map 
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("startTime", jTextField1.getText().toString());
+            map.put("endTime", jTextField2.getText().toString());
+
+            Connection conn = DbConnect.Connect();
+            try {
+                // run report 
+                String path = "src\\fposs\\reports\\SalesLog.jrxml";
+                // set compiler 
+                JasperReport JSPR_REF = JasperCompileManager.compileReport(path);
+                JasperPrint JSPR_PRINT = JasperFillManager.fillReport(JSPR_REF, map, conn);
+                JasperViewer.viewReport(JSPR_PRINT, false);
+            } catch (Exception e) {
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch(Exception e){}
-        
-        
-    }
-    catch(SQLException ex){Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
-}
-    
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
- try{                                         
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("startTime",jTextField1.getText().toString());
-        map.put("endTime",jTextField2.getText().toString());
+        try {
+            // create hash map and populate hash map 
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("startTime", jTextField1.getText().toString());
+            map.put("endTime", jTextField2.getText().toString());
 
-        Connection conn = DbConnect.Connect();
-        try{
-            System.out.println("in try");
-            String path="src\\fposs\\reports\\Tax.jrxml";
-            System.out.println("after path");
-            JasperReport JSPR_REF  = JasperCompileManager.compileReport(path);
-            System.out.println("after ref");
-            JasperPrint JSPR_PRINT =JasperFillManager.fillReport(JSPR_REF,map,conn);
-            System.out.println("after print ");
-           
-            JasperViewer.viewReport(JSPR_PRINT,false);
+            Connection conn = DbConnect.Connect();
+            try {
+                // run tax report 
+                String path = "src\\fposs\\reports\\Tax.jrxml";
+                // set compiler 
+                JasperReport JSPR_REF = JasperCompileManager.compileReport(path);
+                JasperPrint JSPR_PRINT = JasperFillManager.fillReport(JSPR_REF, map, conn);
+                JasperViewer.viewReport(JSPR_PRINT, false);
+            } catch (Exception e) {
+            }
 
-            
+        } catch (SQLException ex) {
+            Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch(Exception e){}
-        
-        
-    }
-    catch(SQLException ex){Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
-}
-
 
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            Connection conn = DbConnect.Connect();
+            try {
+                // run products report 
+                String path = "src\\fposs\\reports\\Products.jrxml";
+                // set compiler 
+                JasperReport JSPR_REF = JasperCompileManager.compileReport(path);
+                JasperPrint JSPR_PRINT = JasperFillManager.fillReport(JSPR_REF, null, conn);
+                JasperViewer.viewReport(JSPR_PRINT, false);
+            } catch (Exception e) {
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        try {
+            Connection conn = DbConnect.Connect();
+            try {
+                // run company set up report 
+                String path = "src\\fposs\\reports\\CompanySetup.jrxml";
+                // set compiler 
+                JasperReport JSPR_REF = JasperCompileManager.compileReport(path);
+                JasperPrint JSPR_PRINT = JasperFillManager.fillReport(JSPR_REF, null, conn);
+                JasperViewer.viewReport(JSPR_PRINT, false);
+            } catch (Exception e) {
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -303,5 +322,4 @@ JasperPrint print;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
 
-    
 }

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package fposs;
 
 /**
@@ -16,8 +15,8 @@ public class FPOSS {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-LOGIN login = new LOGIN();
-login.setVisible(true);
+        LOGIN login = new LOGIN();
+        login.setVisible(true);
     }
-    
+
 }

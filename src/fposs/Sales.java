@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *
+Developer : Mike Duffenais and Chad Paquet 
+Since : Feb 10 2014
+Sales screen requires log in and also DbUtil - builds cat and items buttons from DB 
  */
 
 package fposs;
@@ -31,6 +32,7 @@ import javax.swing.JPanel;
  * @author hirev
  */
 public class Sales extends javax.swing.JFrame {
+    // create vars and arrays 
     private String bsNumber;
     private String cName;
     private String cAddress;
@@ -52,7 +54,7 @@ public class Sales extends javax.swing.JFrame {
      * Creates new form Sales
      * @throws java.sql.SQLException
      */
-   
+   // constructor 
     public Sales(String[] loggedin) throws SQLException {
         //this.userName = userName;
         //this.level = level;
@@ -64,6 +66,7 @@ public class Sales extends javax.swing.JFrame {
     }
     
 public void companySetup() throws SQLException{
+    // gets tax rate and company set up info 
 String[] setup =new String[5];
 setup = DbUtil.loadCompanySetup();
 bsNumber= setup[0];
@@ -75,27 +78,30 @@ taxRate = Double.parseDouble(setup[4]);
 }    
     
 public void onCreate() throws SQLException{
-    //DbUtil categories = new DbUtil();
-    System.out.println(level);
+    // set close option 
+     setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+ // set access to admin panel 
     if(level!=1){jPanel1.setEnabled(false);
             jButton2.setEnabled(false);
             jButton3.setEnabled(false);
             jButton4.setEnabled(false);
             jButton6.setEnabled(false);}
-  
+  // load catagories 
   double catNumeber = DbUtil.loadCategories().length;
+  // rows to set grid layout 
   int rows = (int) Math.ceil(catNumeber/5);
+  // set grid layout 
  jPanel2.setLayout(new GridLayout(rows, 5, 4, 4));
  jPanel3.setVisible(false);
  String array[][] = DbUtil.loadCategories();
-  System.out.println("this is catnumber " +catNumeber);
- System.out.println("this is rows " +rows);
+  // create categories button 
  for(int i=0;i<catNumeber;i++)
         {   
             final JButton btn=new JButton(String.valueOf(array[i][1]));
                 JPanel buttonPane = new JPanel();
                 btn.setName(String.valueOf(array[i][0]));
                 btn.addActionListener(new ActionListener() {
+                    // set onclick lisitner 
         public void actionPerformed(ActionEvent ae2) {
            jPanel2.setVisible(false);
            JPanel itemPane = new JPanel();
@@ -121,20 +127,19 @@ public void onCreate() throws SQLException{
 }
 public void loadItems(String category) throws SQLException{
     
-    System.out.println("this is cat"+category);
   double items = DbUtil.loadItems(category.toString()).length;
-  System.out.println("this is items" + items);
+
   int rows = (int) Math.ceil(items/5);
-  System.out.println("this is rows" + rows);
+
  jPanel3.setLayout(new GridLayout(rows, 5, 4, 4));
  String array[][] = DbUtil.loadItems(category);
   for(int i=0;i<items;i++)
         {   
-            System.out.println("item to be made"+String.valueOf(array[i][1]));
+  // create item buttons 
              JButton btn=new JButton(String.valueOf(array[i][1]));
                 JPanel buttonPane = new JPanel();
                 btn.setName(String.valueOf(array[i][1]));
-                
+                // load array 
                 itemsArray[i][0]=String.valueOf(array[i][0]);
                 itemsArray[i][1]=String.valueOf(array[i][1]);
                 itemsArray[i][2]=String.valueOf(array[i][2]);
@@ -143,20 +148,17 @@ public void loadItems(String category) throws SQLException{
                 itemsArray[i][5]=String.valueOf(array[i][5]);
                 final int buttonIndex = i;
                 btn.addActionListener(new ActionListener() {
-        
+        // set lisitner 
         public  void actionPerformed(ActionEvent ae2) {
            list1.add(String.valueOf(itemsArray[buttonIndex][1]));  
           subTotal += Double.parseDouble(itemsArray[buttonIndex][3]);
-          // Double subTotal = Double.parseDouble(subTotals.getText()) + Double.parseDouble(itemsArray[3]);
-          // Double taxField = Double.parseDouble(taxTemp.getText());
-     //      Double taxCalcTotal;
-           
+    
+           // set taxable flag 
           if(itemsArray[4].equals("1")){
         taxSubtotal+= Double.parseDouble(itemsArray[buttonIndex][3]);
-      
-        // taxField+= Double.parseDouble(itemsArray[3]);
-        //  taxTemp.setText(decim.format(taxField).toString());
+     
           }
+          // calculate tax and update tax 
             taxTotalCalculated =taxSubtotal*(taxRate/100);
         amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
         amountDue.setText(decim.format(amountDueCalculated).toString());
@@ -167,6 +169,7 @@ public void loadItems(String category) throws SQLException{
            jPanel2.setVisible(true);
            jPanel3.setVisible(false);
            jPanel3.removeAll();
+           // populate oanel 
            JPanel itemPane = new JPanel();
            itemPane.setLayout(new GridLayout(5,5,5,5));
            itemPane.setVisible(true);
@@ -500,7 +503,8 @@ public void loadItems(String category) throws SQLException{
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
- Reports reports = new Reports();
+// open reports screen 
+        Reports reports = new Reports();
             reports.pack();
             reports.setVisible(true);    }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -509,18 +513,21 @@ public void loadItems(String category) throws SQLException{
     }//GEN-LAST:event_amountDueActionPerformed
 
     private void buttonApplyDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonApplyDiscountActionPerformed
- discountEntry = Double.parseDouble(discount.getText());
+          // apply discount 
+        discountEntry = Double.parseDouble(discount.getText());
      amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
      amountDue.setText(decim.format(amountDueCalculated).toString());// TODO add your handling code here:
     }//GEN-LAST:event_buttonApplyDiscountActionPerformed
 
     private void buttonAmountPaidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAmountPaidActionPerformed
-   amountPaidEntry = Double.parseDouble(amountPaid.getText());
+  // apply amount paid 
+        amountPaidEntry = Double.parseDouble(amountPaid.getText());
      amountDueCalculated = (taxTotalCalculated+subTotal)-(amountPaidEntry+discountEntry);
      amountDue.setText(decim.format(amountDueCalculated).toString());    }//GEN-LAST:event_buttonAmountPaidActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
+            // open category panel 
             Cat cat = new Cat();
             cat.pack();
             cat.setVisible(true);
@@ -531,6 +538,7 @@ public void loadItems(String category) throws SQLException{
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
+            // open user control 
             UserControl  control = new UserControl();
             control.pack();
             control.setVisible(true);
@@ -542,10 +550,12 @@ public void loadItems(String category) throws SQLException{
 
     private void buttoonNewOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttoonNewOrderActionPerformed
         try {
+            // new order sales update 
             DbUtil.salesUpdate(userName,subTotal,taxTotalCalculated,discountEntry,amountPaidEntry);
         } catch (SQLException ex) {
             Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // set vars 
         subTotal = 0.00;
       taxSubtotal = 0.00;
       taxTotalCalculated=0.00;
@@ -564,6 +574,7 @@ public void loadItems(String category) throws SQLException{
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 try {
+    // open items screen 
             Items  items = new Items();
             items.pack();
             items.setVisible(true);

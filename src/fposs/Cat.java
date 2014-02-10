@@ -1,9 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *Developers: Mike Duffenais and Chad paquet
+ Since: Feb 10 2014
+ Cat screen is used to add edit and delete categories
+ Uses DbUtil to call sql and get build arrays 
+    
  */
-
 package fposs;
 
 import fposs.database.DbUtil;
@@ -14,20 +15,22 @@ import javax.swing.JList;
 
 /**
  *
- * @author hirev
+ * @author Mike DUffenais and Chad Paquet Since Feb 10 2014
+ *
  */
 public class Cat extends javax.swing.JFrame {
-    
-    
 
     /**
      * Creates new form Cat
      */
     String categories[][];
     int selected;
+
+    // constructor 
     public Cat() throws SQLException {
         initComponents();
-        onCreate();    }
+        onCreate();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -179,25 +182,32 @@ public class Cat extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        // add button passes fields to DbUtil to add to database 
         try {
             DbUtil.addCat(jTextField1.getText(), Integer.parseInt(jTextField2.getText()));
             jTextField1.setText("");
             jTextField2.setText("");
             list1.removeAll();
+            // call onCreate() to reload all fields 
             onCreate();
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        // performs edit function on data
+        // passes items over to dbUtil to run statement 
         String test = list1.getSelectedItem();
         String descChange = jTextField1.getText();
         int ordChange = Integer.parseInt(jTextField2.getText());
         try {
+            // call edit 
             DbUtil.editCat(test, descChange, ordChange);
+            // remove items from list 
             list1.removeAll();
+            // call on create 
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
@@ -205,8 +215,10 @@ public class Cat extends javax.swing.JFrame {
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        selected=list1.getSelectedIndex();
+        // Delete items from DB.  Passes selected items from list to delete 
+        selected = list1.getSelectedIndex();
         try {
+            // pass and run fucntion to del cat 
             DbUtil.delCat(categories[selected][0]);
             list1.removeAll();
             onCreate();
@@ -221,12 +233,13 @@ public class Cat extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void list1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list1MouseClicked
-       selected=list1.getSelectedIndex();
+        // set mouse click event to get selected items and load text fields 
+        selected = list1.getSelectedIndex();
         jTextField1.setText(String.valueOf(categories[selected][1]));
         jTextField2.setText(String.valueOf(categories[selected][2]));
-        
+
     }//GEN-LAST:event_list1MouseClicked
-    
+
     /**
      * @param args the command line arguments
      */
@@ -255,15 +268,15 @@ public class Cat extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            try {
-                new Cat().setVisible(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new Cat().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }
-    });
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -281,15 +294,14 @@ public class Cat extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
-  
-    
-    private void onCreate() throws SQLException
-    {
+
+    private void onCreate() throws SQLException {
+        // load list box and set close operation 
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         int strLng = DbUtil.loadCategories().length;
-        categories = DbUtil.loadCategories();  
-        
-        for (int i=0;i<strLng;i++)
-        {
+        categories = DbUtil.loadCategories();
+
+        for (int i = 0; i < strLng; i++) {
             list1.add(String.valueOf(categories[i][1]));
         }
     }

@@ -1,9 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ Developers Mike Duffenais and Chad Paquet 
+ Since Feb 10 2014
+ User scontrol window 
  */
-
 package fposs;
 
 import fposs.database.DbUtil;
@@ -20,28 +19,36 @@ public class UserControl extends javax.swing.JFrame {
     /**
      * Creates new form UserControl
      */
+    // create vars 
     String[][] users;
     int selected;
+
     public UserControl() throws SQLException {
         initComponents();
         onCreate();
-        
+
     }
 
     public void onCreate() throws SQLException {
-    setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-    users = DbUtil.getUsers();
-    for(int i =0;i<users.length;i++){
-        if(users[i][1].equals("1")){
-    list1.add(users[i][0]);}
-        else{
-         list1.add(users[i][0]);}
-    
+        // set screen view 
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        // get users 
+        users = DbUtil.getUsers();
+       // populate users lists 
+        for (int i = 0; i < users.length; i++) {
+            if (users[i][1].equals("1")) {
+                list1.add(users[i][0]);
+            } else {
+                list1.add(users[i][0]);
+            }
+
+        }
+        // set button visibility 
+        ButtonSaveEdit.setVisible(false);
+        ButtonSaveNew.setVisible(false);
+        ButtonSaveDelete.setVisible(false);
     }
-    ButtonSaveEdit.setVisible(false);
-    ButtonSaveNew.setVisible(false);
-    ButtonSaveDelete.setVisible(false);
-    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -239,7 +246,7 @@ public class UserControl extends javax.swing.JFrame {
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         //System.exit(0);
-        
+
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -247,6 +254,7 @@ public class UserControl extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      //set visibility of items 
         list1.setEnabled(false);
         jTextField1.setEnabled(true);
         jTextField2.setEnabled(true);
@@ -259,7 +267,8 @@ public class UserControl extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ButtonSaveEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveEditActionPerformed
-         list1.setEnabled(true);
+     // Edit save  - saves updated text 
+        list1.setEnabled(true);
         jTextField1.setEnabled(false);
         jTextField2.setEnabled(false);
         jTextField2.setEditable(false);
@@ -269,12 +278,15 @@ public class UserControl extends javax.swing.JFrame {
         jButton3.setVisible(true);
         ButtonSaveEdit.setVisible(false);
         try {
-            DbUtil.userUpdate(jTextField1.getText(), jTextField2.getText(),jComboBox1.getSelectedIndex());
+            // update user function 
+            DbUtil.userUpdate(jTextField1.getText(), jTextField2.getText(), jComboBox1.getSelectedIndex());
         } catch (SQLException ex) {
             Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // remove all items from list 
         list1.removeAll();
         try {
+            // reload items 
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -282,6 +294,7 @@ public class UserControl extends javax.swing.JFrame {
     }//GEN-LAST:event_ButtonSaveEditActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+      // set visibility of items 
         list1.setEnabled(false);
         jTextField1.setEnabled(true);
         jTextField2.setEnabled(true);
@@ -296,6 +309,7 @@ public class UserControl extends javax.swing.JFrame {
     private void ButtonSaveDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveDeleteActionPerformed
         try {
             try {
+                // set visibility 
                 list1.setEnabled(true);
                 jTextField1.setEnabled(false);
                 jTextField2.setEnabled(false);
@@ -305,19 +319,22 @@ public class UserControl extends javax.swing.JFrame {
                 jButton2.setVisible(true);
                 jButton3.setVisible(true);
                 ButtonSaveDelete.setVisible(false);
+                // delete function 
                 DbUtil.deleteUser(list1.getSelectedItem().toString());
             } catch (SQLException ex) {
                 Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
             }
+            // remove items and reload 
             list1.removeAll();
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_ButtonSaveDeleteActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+       // set visibility of items 
         list1.setEnabled(false);
         jTextField1.setEnabled(true);
         jTextField1.setText(null);
@@ -334,6 +351,7 @@ public class UserControl extends javax.swing.JFrame {
 
     private void ButtonSaveNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveNewActionPerformed
         try {
+            // set visibility 
             list1.setEnabled(true);
             jTextField1.setEnabled(false);
             jTextField1.setEditable(false);
@@ -344,20 +362,23 @@ public class UserControl extends javax.swing.JFrame {
             jButton2.setVisible(true);
             jButton3.setVisible(true);
             ButtonSaveNew.setVisible(false);
+            // add function to add user 
             DbUtil.addUser(jTextField1.getText(), jTextField2.getText(), jComboBox1.getSelectedIndex());
         } catch (SQLException ex) {
             Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // remove items and reload 
         list1.removeAll();
         try {
             onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(UserControl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_ButtonSaveNewActionPerformed
 
     private void list1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list1MouseClicked
+       // populate fields from selected item in list
         selected = list1.getSelectedIndex();
         jTextField1.setText(users[selected][0]);
         jTextField2.setText("*********");

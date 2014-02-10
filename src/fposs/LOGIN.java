@@ -1,12 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *Developer : Mike Duffenais and Chad Paquet
+ Since : Feb 10 2014
+ Login uses DbUtil to 
  */
-
 package fposs;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.String;
 import fposs.database.DbUtil;
 import java.awt.Color;
 import java.sql.SQLException;
@@ -15,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author hirev
+ * @author Mike DUffenais and chad Paquet 
  */
 public class LOGIN extends javax.swing.JFrame {
 
@@ -148,35 +146,39 @@ public class LOGIN extends javax.swing.JFrame {
     }//GEN-LAST:event_textUserActionPerformed
 
     private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
-    System.out.println(textUser.getText().length());
-        System.out.println("this is user name:"+textUser.getText());
-            System.out.println("this is password:"+textPassword.getText());
-        if(!textUser.getText().isEmpty() && !textPassword.getText().isEmpty()){
-           try {
-               DbUtil login = new DbUtil(textUser.getText(),textPassword.getText());
-               String[] loggedin = login.logIn();
-               System.out.println(login.logIn());
-               if(loggedin[0].equals("true")){
-               Sales sales = new Sales(loggedin);
-               sales.pack();
-               sales.setVisible(true);
-               this.setVisible(false);
-               
-               }
-           } catch (SQLException ex) {
-               Logger.getLogger(LOGIN.class.getName()).log(Level.SEVERE, null, ex);
-           }
-       }
-             else{
-            System.out.println("This is in color switch");
-       if(textUser.getText().isEmpty()){textUser.setBackground(Color.red);
-           System.out.println("this is in first color switch");}
-       if(textPassword.getText().isEmpty()){textPassword.setBackground(Color.red);}
-       }
-        
+    // Log in script Gets texts from fields and passes it to function to confirm user 
+        // checks if fields are empty 
+        if (!textUser.getText().isEmpty() && !textPassword.getText().isEmpty()) {
+            try {
+                // get login array 
+                DbUtil login = new DbUtil(textUser.getText(), textPassword.getText());
+                String[] loggedin = login.logIn();
+                // check if user if valid 
+                if (loggedin[0].equals("true")) {
+                    // open sales screen if user is valid 
+                    Sales sales = new Sales(loggedin);
+                    sales.pack();
+                    sales.setVisible(true);
+                    this.setVisible(false);
+
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(LOGIN.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+
+            if (textUser.getText().isEmpty()) {
+                textUser.setBackground(Color.red);
+            }
+            if (textPassword.getText().isEmpty()) {
+                textPassword.setBackground(Color.red);
+            }
+        }
+
     }//GEN-LAST:event_buttonLoginActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
+        // set fields to null 
         textUser.setText(null);
         textPassword.setText(null);
     }//GEN-LAST:event_buttonClearActionPerformed
