@@ -175,6 +175,9 @@
       </Properties>
     </Component>
     <Component class="java.awt.List" name="list1">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="list1MouseClicked"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

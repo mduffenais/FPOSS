@@ -43,11 +43,11 @@ public class Sales extends javax.swing.JFrame {
     private Double amountDueCalculated=0.00;
     private Double amountPaidEntry=0.00;
     private Double discountEntry=0.00;
-   String itemsArray[]=new String[6];
+   String itemsArray[][]=new String[99][6];
    private static String userName;
    private static int level;
    DecimalFormat decim = new DecimalFormat("#.00");
-  private ArrayList<String[]> action = new ArrayList<String[]>();
+  private ArrayList<String[][]> action = new ArrayList<String[][]>();
     /**
      * Creates new form Sales
      * @throws java.sql.SQLException
@@ -131,26 +131,28 @@ public void loadItems(String category) throws SQLException{
   for(int i=0;i<items;i++)
         {   
             System.out.println("item to be made"+String.valueOf(array[i][1]));
-            final JButton btn=new JButton(String.valueOf(array[i][1]));
+             JButton btn=new JButton(String.valueOf(array[i][1]));
                 JPanel buttonPane = new JPanel();
                 btn.setName(String.valueOf(array[i][1]));
                 
-                itemsArray[0]=String.valueOf(array[i][0]);
-                itemsArray[1]=String.valueOf(array[i][1]);
-                itemsArray[2]=String.valueOf(array[i][2]);
-                itemsArray[3]=String.valueOf(array[i][3]);
-                itemsArray[4]=String.valueOf(array[i][4]);
-                itemsArray[5]=String.valueOf(array[i][5]);
+                itemsArray[i][0]=String.valueOf(array[i][0]);
+                itemsArray[i][1]=String.valueOf(array[i][1]);
+                itemsArray[i][2]=String.valueOf(array[i][2]);
+                itemsArray[i][3]=String.valueOf(array[i][3]);
+                itemsArray[i][4]=String.valueOf(array[i][4]);
+                itemsArray[i][5]=String.valueOf(array[i][5]);
+                final int buttonIndex = i;
                 btn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae2) {
-           list1.add(String.valueOf(itemsArray[1]));  
-          subTotal += Double.parseDouble(itemsArray[3]);
+        
+        public  void actionPerformed(ActionEvent ae2) {
+           list1.add(String.valueOf(itemsArray[buttonIndex][1]));  
+          subTotal += Double.parseDouble(itemsArray[buttonIndex][3]);
           // Double subTotal = Double.parseDouble(subTotals.getText()) + Double.parseDouble(itemsArray[3]);
           // Double taxField = Double.parseDouble(taxTemp.getText());
      //      Double taxCalcTotal;
            
           if(itemsArray[4].equals("1")){
-        taxSubtotal+= Double.parseDouble(itemsArray[3]);
+        taxSubtotal+= Double.parseDouble(itemsArray[buttonIndex][3]);
       
         // taxField+= Double.parseDouble(itemsArray[3]);
         //  taxTemp.setText(decim.format(taxField).toString());
@@ -264,6 +266,11 @@ public void loadItems(String category) throws SQLException{
         });
 
         jButton4.setText("Items");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Reports");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -493,8 +500,9 @@ public void loadItems(String category) throws SQLException{
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+ Reports reports = new Reports();
+            reports.pack();
+            reports.setVisible(true);    }//GEN-LAST:event_jButton6ActionPerformed
 
     private void amountDueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_amountDueActionPerformed
         // TODO add your handling code here:
@@ -545,6 +553,7 @@ public void loadItems(String category) throws SQLException{
       amountPaidEntry=0.00;
       discountEntry=0.00;
      list1.removeAll();
+     taxTotal.setText("0.00");
      subTotals.setText("0.00");
      total.setText("0.00");
      discount.setText("0.00");
@@ -552,6 +561,16 @@ public void loadItems(String category) throws SQLException{
      amountDue.setText("0.00");
      
       }//GEN-LAST:event_buttoonNewOrderActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+try {
+            Items  items = new Items();
+            items.pack();
+            items.setVisible(true);
+            // this.setVisible(false);  
+        } catch (SQLException ex) {
+            Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
+        }    }//GEN-LAST:event_jButton4ActionPerformed
 
     
     /**

@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.security.util.BigInt;
 /**
  *
  * @author hirev
@@ -54,6 +55,15 @@ public class DbUtil {
         }
   
   
+    }
+    public static void editItems(String barcode,String productName, int categoryid, double price, int taxable, int displayOrder) throws SQLException{
+  String sql;  
+    Connection conn = DbConnect.Connect();
+    sql="UPDATE products SET product_Name='"+productName+"',categoryid="+categoryid+",price="+price+
+            ",taxable="+taxable+",display_Order="+displayOrder+" where barcode="+barcode;
+    System.out.println(sql);
+conn.createStatement().executeUpdate(sql);
+
     }
     
     public static String[] loadCompanySetup() throws SQLException{
@@ -139,6 +149,15 @@ public class DbUtil {
         sql = "DELETE FROM users WHERE username ='"+userName+"'";
           conn.createStatement().executeUpdate(sql);
         }
+        
+        public static void deleteItem(String barcode) throws SQLException{
+         String sql;
+         
+            Connection conn = DbConnect.Connect();
+        sql = "DELETE FROM products WHERE barcode ="+barcode;
+          conn.createStatement().executeUpdate(sql);
+        }
+        
         public static void addUser(String userName, String password, int level) throws SQLException{
            String sql;
             Connection conn = DbConnect.Connect();
@@ -146,6 +165,7 @@ public class DbUtil {
                conn.createStatement().executeUpdate(sql);
         
         }
+        
         
         public static void userUpdate(String editUserName, String editPassword, int level) throws SQLException{
             String sql;
@@ -177,15 +197,30 @@ public class DbUtil {
             users[rsUsers.getRow()-1][0]=rsUsers.getString("username");
             users[rsUsers.getRow()-1][1]=rsUsers.getString("level");
             }
-         
         return users;
-        }
-            
-        }
-		
-		  public static void delCat (String dispDesc) throws SQLException{
+        } }
+        public static  String[][] loadItems() throws SQLException{
+            ResultSet rsItems;
             try (Connection conn = DbConnect.Connect()) {
-                String sql = "DELETE FROM categories WHERE category_name='"+dispDesc+"'";
+            //Statement sLoadC = conn.createStatement();
+            String sql = "Select * from products";
+            rsItems = conn.createStatement().executeQuery(sql);
+            rsItems.last();
+            String items[][] = new String[rsItems.getRow()][6];
+            rsItems.beforeFirst();
+            while(rsItems.next()){
+            items[rsItems.getRow()-1][0]=rsItems.getString("barcode");
+            items[rsItems.getRow()-1][1]=rsItems.getString("product_Name");
+            items[rsItems.getRow()-1][2]=rsItems.getString("categoryid");
+            items[rsItems.getRow()-1][3]=rsItems.getString("price");
+            items[rsItems.getRow()-1][4]=rsItems.getString("taxable");
+            items[rsItems.getRow()-1][5]=rsItems.getString("display_Order");
+            }
+        return items;    
+        }}
+  public static void delCat (String selected) throws SQLException{
+            try (Connection conn = DbConnect.Connect()) {
+                String sql = "DELETE FROM categories WHERE catagoryid="+Integer.parseInt(selected);
                 //System.out.println(sql);
                 conn.createStatement().executeUpdate(sql);
                 conn.close();
@@ -212,15 +247,14 @@ public class DbUtil {
         }
         }
             
-        public static void addItem(int barcode, String prodName, double price, 
-                int tax, int dispOrd) throws SQLException{
-            try (Connection conn = DbConnect.Connect()) {
-                String sql = "INSERT INTO products(barcode,product_Name," +
-                        "price,taxable,display_Order)"+
-                        "VALUES("+barcode+",'"+prodName+"',"+price+","+tax+","+dispOrd+")";
-                conn.createStatement().executeQuery(sql);
-                conn.close();
-            }
+        public static void addItem(String barcode,String productName, int categoryid, double price, int taxable, int displayOrder) throws SQLException{
+  String sql;  
+    Connection conn = DbConnect.Connect();
+    sql="INSERT INTO `products`(`barcode`, `product_Name`, `categoryid`, `price`, `taxable`, `display_Order`)"
+    +"VALUES ("+barcode+",'"+productName+"',"+categoryid+","+price+","+taxable+","+displayOrder+")";
+    
+    System.out.println(sql);
+conn.createStatement().executeUpdate(sql);
         }
     
 }

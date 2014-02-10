@@ -23,10 +23,11 @@ public class Cat extends javax.swing.JFrame {
     /**
      * Creates new form Cat
      */
+    String categories[][];
+    int selected;
     public Cat() throws SQLException {
         initComponents();
-        loadList();
-    }
+        onCreate();    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,6 +91,12 @@ public class Cat extends javax.swing.JFrame {
         jTextField1.setText("jTextField1");
 
         jTextField2.setText("jTextField2");
+
+        list1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                list1MouseClicked(evt);
+            }
+        });
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -177,7 +184,7 @@ public class Cat extends javax.swing.JFrame {
             jTextField1.setText("");
             jTextField2.setText("");
             list1.removeAll();
-            loadList();
+            onCreate();
             
         } catch (SQLException ex) {
             Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
@@ -191,18 +198,18 @@ public class Cat extends javax.swing.JFrame {
         try {
             DbUtil.editCat(test, descChange, ordChange);
             list1.removeAll();
-            loadList();
+            onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        String test = list1.getSelectedItem();
+        selected=list1.getSelectedIndex();
         try {
-            DbUtil.delCat(test);
+            DbUtil.delCat(categories[selected][0]);
             list1.removeAll();
-            loadList();
+            onCreate();
         } catch (SQLException ex) {
             Logger.getLogger(Cat.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -212,6 +219,13 @@ public class Cat extends javax.swing.JFrame {
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void list1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list1MouseClicked
+       selected=list1.getSelectedIndex();
+        jTextField1.setText(String.valueOf(categories[selected][1]));
+        jTextField2.setText(String.valueOf(categories[selected][2]));
+        
+    }//GEN-LAST:event_list1MouseClicked
     
     /**
      * @param args the command line arguments
@@ -267,16 +281,16 @@ public class Cat extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
-    private String loadCat[][];
+  
     
-    private void loadList() throws SQLException
+    private void onCreate() throws SQLException
     {
         int strLng = DbUtil.loadCategories().length;
-        loadCat = DbUtil.loadCategories();  
-        System.out.println(loadCat[0][0].toString());
+        categories = DbUtil.loadCategories();  
+        
         for (int i=0;i<strLng;i++)
         {
-            list1.add(String.valueOf(loadCat[i][1]));
+            list1.add(String.valueOf(categories[i][1]));
         }
     }
 }

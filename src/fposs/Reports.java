@@ -6,7 +6,16 @@
 
 package fposs;
 
-import java.sql.Date;
+import fposs.database.DbConnect;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.view.*;
 
 /**
  *
@@ -19,9 +28,11 @@ public class Reports extends javax.swing.JFrame {
      */
     public Reports() {
         initComponents();
-     
+     onCreate();
     }
-
+public void onCreate(){
+ setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,10 +44,15 @@ public class Reports extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
-        dt_from_date = new javax.swing.JTextField();
-        dt_to_date = new javax.swing.JTextField();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jTextField4 = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -45,23 +61,37 @@ public class Reports extends javax.swing.JFrame {
 
         jLabel1.setText("Reports");
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Sales Log");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jList2.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        jTextField1.setText("jTextField1");
+
+        jLabel2.setText("Start time");
+
+        jTextField2.setText("jTextField2");
+
+        jLabel3.setText("End time");
+
+        jTextField3.setText("Date format: yyyy-mm-dd 23:00:00");
+        jTextField3.setEnabled(false);
+
+        jButton2.setText("Products");
+
+        jButton3.setText("Company SetUp");
+
+        jButton4.setText("Tax Log");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
         });
-        jScrollPane2.setViewportView(jList2);
 
-        dt_from_date.setText("jTextField1");
-
-        dt_to_date.setText("jTextField2");
+        jTextField4.setBackground(new java.awt.Color(0, 0, 0));
+        jTextField4.setEnabled(false);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -83,38 +113,59 @@ public class Reports extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTextField4)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(150, 150, 150)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(122, 122, 122)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dt_to_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dt_from_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(102, 102, 102))
+                        .addGap(103, 103, 103)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton3))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel3)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4)
+                            .addComponent(jButton1))))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(dt_from_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(dt_to_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jButton1))
+                .addGap(7, 7, 7)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         pack();
@@ -125,14 +176,81 @@ public class Reports extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-   
+    try{                                         
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("startTime",jTextField1.getText().toString());
+        map.put("endTime",jTextField2.getText().toString());
+   String fileName = "test1.jrxml";  
+        String outFileName = "test.pdf"; 
+        Connection conn = DbConnect.Connect();
+        try{
+            System.out.println("in try");
+            String path="src\\fposs\\reports\\SalesLog.jrxml";
+            System.out.println("after path");
+          //  JasperReport JSPR_REF  = JasperCompileManager.compileReport(path);
+           // System.out.println("after ref");
+           // JasperPrint JSPR_PRINT =JasperFillManager.fillReport(JSPR_REF,map,conn);
+            //System.out.println("after print ");
+            //JasperViewer.viewReport(JSPR_PRINT,false);
+JasperPrint print;  
+            JasperReport jasperreport;  
+            jasperreport = JasperCompileManager.compileReport(fileName);  
+            print = JasperFillManager.fillReport(jasperreport, map, new JREmptyDataSource());  
+  
+            // Create a PDF exporter  
+            JRExporter exporter = new JRPdfExporter();  
+              
+            // Configure the exporter (set output file name and print object)  
+            exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outFileName);  
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);  
+  
+            // Export the PDF file  
+            exporter.exportReport();  
+            } catch (JRException ex) {  
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);  
+        }
+        catch(Exception e){}
         
         
-        
-        
-        
+    }
+    catch(SQLException ex){Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
+}
+    
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+ try{                                         
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("startTime",jTextField1.getText().toString());
+        map.put("endTime",jTextField2.getText().toString());
+
+        Connection conn = DbConnect.Connect();
+        try{
+            System.out.println("in try");
+            String path="src\\fposs\\reports\\Tax.jrxml";
+            System.out.println("after path");
+            JasperReport JSPR_REF  = JasperCompileManager.compileReport(path);
+            System.out.println("after ref");
+            JasperPrint JSPR_PRINT =JasperFillManager.fillReport(JSPR_REF,map,conn);
+            System.out.println("after print ");
+           
+            JasperViewer.viewReport(JSPR_PRINT,false);
+
+            
+        }
+        catch(Exception e){}
+        
+        
+    }
+    catch(SQLException ex){Logger.getLogger(Reports.class.getName()).log(Level.SEVERE, null, ex);
+}
+
+
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    
     /**
      * @param args the command line arguments
      */
@@ -169,15 +287,21 @@ public class Reports extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField dt_from_date;
-    private javax.swing.JTextField dt_to_date;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList2;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
 
+    
 }
